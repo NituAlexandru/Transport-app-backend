@@ -1,29 +1,18 @@
-import jwt from "jsonwebtoken"; // Importă biblioteca jsonwebtoken pentru manipularea JWT-urilor
+import jwt from "jsonwebtoken"; 
 
-// Middleware pentru verificarea token-ului JWT
 export const verifyToken = (req, res, next) => {
-  // Preia token-ul din antetul Authorization al cererii (dacă există)
-  const token = req.headers.authorization?.split(" ")[1];
+  const token = req.cookies.token; // Extrage token-ul JWT din cookie-urile cererii.
 
-  // Dacă token-ul nu există, trimite un răspuns cu status 401 (Unauthorized)
+  // Verifică dacă token-ul există.
   if (!token) {
-    return res.status(401).json({ message: "Token lipsă. Acces interzis!" });
+    return res.status(401).json({ message: "Token lipsă. Acces interzis!" }); // Returnează un mesaj de eroare dacă token-ul nu este prezent.
   }
 
   try {
-    // Verifică validitatea token-ului folosind cheia secretă
-    const decoded = jwt.verify(token, process.env.JWT_SECRET);
-
-    // Afișează conținutul token-ului decodat pentru depanare (opțional)
-    console.log("Decoded JWT:", decoded);
-
-    // Atribuie datele decodate ale utilizatorului (din token) obiectului `req`
-    req.user = decoded;
-
-    // Continuă cu următorul middleware sau rută
-    next();
+    const decoded = jwt.verify(token, process.env.JWT_SECRET); // Verifică și decodează token-ul folosind cheia secretă din variabilele de mediu.
+    req.user = decoded; // Stochează informațiile decodificate ale utilizatorului în obiectul req pentru a fi accesibile în rutele următoare.
+    next(); // Permite trecerea la următoarea funcție middleware sau rută.
   } catch (error) {
-    // Dacă token-ul nu este valid sau a expirat, trimite un răspuns cu status 403 (Forbidden)
-    res.status(403).json({ message: "Token invalid!" });
+    res.status(403).json({ message: "Token invalid!" }); // Returnează un mesaj de eroare dacă token-ul este invalid sau expirat.
   }
 };

@@ -4,33 +4,52 @@ import cors from "cors";
 import helmet from "helmet";
 import morgan from "morgan";
 import cookieParser from "cookie-parser";
+import session from "express-session";
+import passport from "passport";
 import mongoose from "mongoose";
 import authRoutes from "./routes/authRoutes.js";
+import googleAuthRoutes from "./routes/googleAuthRoutes.js";
+import "./config/passport.js"; // Configurare Passport.js pentru Google
 
 dotenv.config();
 
-const app = express(); // Creează o aplicație Express
+const app = express();
 
 // Middleware
-app.use(express.json()); // Parsează cererile cu corp JSON
+app.use(express.json());
 app.use(
   cors({
-    origin: process.env.CLIENT_URL, // Permite cereri doar de la URL-ul specificat în `.env`
-    credentials: true, // Activează trimiterea cookie-urilor și altor acreditive
+    origin: process.env.CLIENT_URL,
+    credentials: true,
   })
 );
-app.use(helmet()); // Adaugă anteturi HTTP pentru a proteja aplicația de atacuri comune
-app.use(morgan("dev")); // Loghează cererile HTTP în consola serverului
-app.use(cookieParser()); // Permite manipularea și accesarea cookie-urilor
+app.use(helmet());
+app.use(morgan("dev"));
+app.use(cookieParser());
+app.use(
+  session({
+    secret: process.env.SESSION_SECRET,
+    resave: false,
+    saveUninitialized: true,
+    cookie: {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === "production",
+      sameSite: "strict",
+    },
+  })
+);
+app.use(passport.initialize());
+app.use(passport.session());
 
 // Conectare la MongoDB
 mongoose
-  .connect(process.env.MONGO_URI) // Conectare la baza de date MongoDB folosind URI-ul din `.env`
-  .then(() => console.log("✅ Conectat la MongoDB")) // Afișează un mesaj de succes în caz de conectare reușită
-  .catch((err) => console.error("❌ Eroare conectare MongoDB:", err)); // Afișează un mesaj de eroare în caz de eșec
+  .connect(process.env.MONGO_URI)
+  .then(() => console.log("✅ Conectat la MongoDB"))
+  .catch((err) => console.error("❌ Eroare conectare MongoDB:", err));
 
 // Rute
-app.use("/", authRoutes); // Asociază toate rutele definite în `authRoutes.js` la baza URL-ului "/"
+app.use("/", authRoutes);
+app.use("/", googleAuthRoutes);
 
 const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => console.log(`🚀 Server pornit pe portul ${PORT}`));
