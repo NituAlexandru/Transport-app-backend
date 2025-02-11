@@ -7,11 +7,11 @@ dotenv.config();
 const router = express.Router();
 const GOOGLE_MAPS_API_KEY = process.env.GOOGLE_MAPS_API_KEY;
 
-// 🔹 **PUNCTE DE PLECARE/SOSIRE DEFAULT**
+//  **PUNCTE DE PLECARE/SOSIRE DEFAULT**
 const DEFAULT_START = "Strada Industriilor 191, Chiajna 077041";
 const DEFAULT_END = "Strada Industriilor 191, Chiajna 077041";
 
-// 🔹 **Optimizăm traseul**
+//  **Optimizăm traseul**
 const getOptimizedRoute = async (points, start, end) => {
   try {
     console.log("🔍 Încep optimizarea rutei...");
@@ -66,7 +66,7 @@ const getOptimizedRoute = async (points, start, end) => {
   }
 };
 
-// 🔹 **Endpoint API pentru optimizarea rutei** (Păstrat tot, doar am adăugat verificarea pentru default start/end!)
+// **Endpoint API pentru optimizarea rutei** (Păstrat tot, doar am adăugat verificarea pentru default start/end!)
 router.post("/optimize-route", async (req, res) => {
   try {
     console.log("📥 Cerere primită la /optimize-route:", req.body);
