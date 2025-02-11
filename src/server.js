@@ -10,6 +10,7 @@ import mongoose from "mongoose";
 import authRoutes from "./routes/authRoutes.js";
 import googleAuthRoutes from "./routes/googleAuthRoutes.js";
 import "./config/passport.js"; // Configurare Passport.js pentru Google
+import routeOptimizer from "./routes/routeOptimizer.js";
 
 dotenv.config();
 
@@ -50,6 +51,7 @@ mongoose
 // Rute
 app.use("/", authRoutes);
 app.use("/", googleAuthRoutes);
+app.use("/", routeOptimizer);
 
 const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => console.log(`🚀 Server pornit pe portul ${PORT}`));
