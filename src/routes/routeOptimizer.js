@@ -9,9 +9,9 @@ const GOOGLE_MAPS_API_KEY = process.env.GOOGLE_MAPS_API_KEY;
 
 // 🔹 **PUNCTE DE PLECARE/SOSIRE DEFAULT**
 const DEFAULT_START = "Strada Industriilor 191, Chiajna 077041";
-const DEFAULT_END = "Strada Nițu Vasile 68, București 041548";
+const DEFAULT_END = "Strada Industriilor 191, Chiajna 077041";
 
-// 🔹 **Optimizăm traseul** 
+// 🔹 **Optimizăm traseul**
 const getOptimizedRoute = async (points, start, end) => {
   try {
     console.log("🔍 Încep optimizarea rutei...");
