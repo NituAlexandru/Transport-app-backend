@@ -7,32 +7,11 @@ dotenv.config();
 const router = express.Router();
 const GOOGLE_MAPS_API_KEY = process.env.GOOGLE_MAPS_API_KEY;
 
-// Puncte de plecare/sosire default
-let DEFAULT_START = "Strada Industriilor 191, Chiajna 077041";
-let DEFAULT_END = "Strada Nițu Vasile 68, București 041548";
+// 🔹 **PUNCTE DE PLECARE/SOSIRE DEFAULT**
+const DEFAULT_START = "Strada Industriilor 191, Chiajna 077041";
+const DEFAULT_END = "Strada Nițu Vasile 68, București 041548";
 
-// Convertim adresele în coordonate GPS
-const geocodeAddress = async (address) => {
-  try {
-    const response = await axios.get(
-      "https://maps.googleapis.com/maps/api/geocode/json",
-      {
-        params: { address, key: GOOGLE_MAPS_API_KEY },
-      }
-    );
-
-    if (response.data.results.length === 0) {
-      throw new Error(`Adresa nu a fost găsită: ${address}`);
-    }
-
-    return response.data.results[0].geometry.location;
-  } catch (error) {
-    console.error("Eroare geocodificare:", error);
-    throw error;
-  }
-};
-
-// Optimizăm traseul
+// 🔹 **Optimizăm traseul** 
 const getOptimizedRoute = async (points, start, end) => {
   try {
     console.log("🔍 Încep optimizarea rutei...");
@@ -41,12 +20,14 @@ const getOptimizedRoute = async (points, start, end) => {
       throw new Error("Punctele de start și end sunt necesare!");
     }
 
-    // Verificăm dacă există puncte intermediare
-    const hasWaypoints = Array.isArray(points) && points.length > 0;
+    // Filtrăm doar punctele valide
+    const validPoints = points.filter(
+      (p) => p.address && p.address.trim() !== ""
+    );
 
     console.log(
-      "✅ Punctele intermediare:",
-      hasWaypoints ? points : "Niciun punct intermediar"
+      "✅ Puncte intermediare:",
+      validPoints.length > 0 ? validPoints : "Niciun punct intermediar"
     );
 
     // Construim parametrii pentru cererea API
@@ -54,13 +35,12 @@ const getOptimizedRoute = async (points, start, end) => {
       origin: start,
       destination: end,
       key: GOOGLE_MAPS_API_KEY,
-      departure_time: "now",
       mode: "driving",
     };
 
     // Adăugăm waypoints DOAR dacă există puncte intermediare
-    if (hasWaypoints) {
-      params.waypoints = `optimize:true|${points
+    if (validPoints.length > 0) {
+      params.waypoints = `optimize:true|${validPoints
         .map((wp) => wp.address)
         .join("|")}`;
     }
@@ -86,12 +66,16 @@ const getOptimizedRoute = async (points, start, end) => {
   }
 };
 
-// Endpoint API pentru optimizarea rutei
+// 🔹 **Endpoint API pentru optimizarea rutei** (Păstrat tot, doar am adăugat verificarea pentru default start/end!)
 router.post("/optimize-route", async (req, res) => {
   try {
     console.log("📥 Cerere primită la /optimize-route:", req.body);
 
     let { points, start, end } = req.body;
+
+    // **Dacă nu sunt setate, folosim DEFAULT**
+    start = start || DEFAULT_START;
+    end = end || DEFAULT_END;
 
     if (!start || !end) {
       return res
