@@ -57,4 +57,10 @@ app.use("/", routeOptimizer);
 
 // const PORT = process.env.PORT || 5000;
 // app.listen(PORT, () => console.log(`🚀 Server pornit pe portul ${PORT}`));
-export default app; // pentru vercell
+
+// pentru vercell
+app.get("/", (req, res) => {
+  res.send("Hello from Vercel Serverless!");
+});
+
+export default app;
