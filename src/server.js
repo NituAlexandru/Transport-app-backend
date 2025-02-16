@@ -53,6 +53,8 @@ app.use("/", authRoutes);
 app.use("/", googleAuthRoutes);
 app.use("/", routeOptimizer);
 
+// pentru local
+
 // const PORT = process.env.PORT || 5000;
 // app.listen(PORT, () => console.log(`🚀 Server pornit pe portul ${PORT}`));
-export default app;
+export default app; // pentru vercell
