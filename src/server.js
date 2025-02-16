@@ -53,5 +53,6 @@ app.use("/", authRoutes);
 app.use("/", googleAuthRoutes);
 app.use("/", routeOptimizer);
 
-const PORT = process.env.PORT || 5000;
-app.listen(PORT, () => console.log(`🚀 Server pornit pe portul ${PORT}`));
+// const PORT = process.env.PORT || 5000;
+// app.listen(PORT, () => console.log(`🚀 Server pornit pe portul ${PORT}`));
+export default app;
