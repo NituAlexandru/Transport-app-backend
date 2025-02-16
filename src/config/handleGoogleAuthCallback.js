@@ -24,8 +24,11 @@ const handleGoogleAuthCallback = async (req, res) => {
     // Salvează token-ul într-un cookie HTTP-Only pentru securitate.
     res.cookie("token", token, {
       httpOnly: true, // Asigură că token-ul nu poate fi accesat prin JavaScript din browser.
-      secure: process.env.NODE_ENV === "production", // Folosește securitate sporită doar în producție (HTTPS).
-      sameSite: "strict", // Previne atacurile CSRF prin restricționarea utilizării cookie-urilor.
+      // secure: process.env.NODE_ENV === "production", // dezvoltare -- Folosește securitate sporită doar în producție (HTTPS).
+      // sameSite: "strict", // dezvoltare -- Previne atacurile CSRF prin restricționarea utilizării cookie-urilor.
+
+      secure: true, // Vercell -- Folosește true în producție (Vercel e HTTPS)
+      sameSite: "none", // Vercell -- Permite cookie cross-site
       maxAge: 7 * 24 * 60 * 60 * 1000, // Setează durata de viață a cookie-ului la 7 zile.
     });
 

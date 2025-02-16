@@ -47,8 +47,11 @@ export const login = async (req, res) => {
     // Stochează token-ul într-un cookie HTTP-Only pentru securitate.
     res.cookie("token", token, {
       httpOnly: true, // Asigură că token-ul nu poate fi accesat din JavaScript în browser.
-      secure: process.env.NODE_ENV === "production", // Utilizează securitate sporită în producție (HTTPS).
-      sameSite: "strict", // Previne atacurile CSRF prin restricționarea accesului la cookie.
+      // secure: process.env.NODE_ENV === "production", // dezvoltare -- Utilizează securitate sporită în producție (HTTPS).
+      // sameSite: "strict", // dezvoltare -- Previne atacurile CSRF prin restricționarea accesului la cookie.
+
+      secure: true, // Vercell -- Folosește true în producție (Vercel e HTTPS)
+      sameSite: "none", // Vercell -- Permite cookie cross-site
       maxAge: 7 * 24 * 60 * 60 * 1000, // Setează durata de viață a cookie-ului la 7 zile.
     });
 
@@ -61,5 +64,5 @@ export const login = async (req, res) => {
 // Funcția pentru deconectarea utilizatorului.
 export const logout = (req, res) => {
   res.clearCookie("token"); // Șterge cookie-ul token pentru a invalida sesiunea utilizatorului.
-  res.status(200).json({ message: "Deconectare reușită!" }); 
+  res.status(200).json({ message: "Deconectare reușită!" });
 };
